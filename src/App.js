@@ -8,6 +8,7 @@ import VideoUpload from './components/VideoUpload';
 import Yojnaye from './components/Yojnaye';
 import Questions from './components/Questions';
 import Footer from './components/Footer';
+import Discuss from './components/Discuss';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Yojnaye id="yojnaye" />
             <Questions id="questions" />
             <VideoUpload id="video-upload" />
+            <Discuss id="Discuss"/>
             <Footer id="contact"/>
           </>
         } />

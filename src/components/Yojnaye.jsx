@@ -13,20 +13,20 @@ const Yojnaye = () => {
   ];
 
   return (
-    <div id="yojnaye" className="flex flex-col items-center mt-6">
+    <div id="yojnaye" className="flex flex-col items-center justify-between h-screen p-4">
       {/* Heading */}
-      <div className="w-full lg:w-[800px] h-[60px] px-4">
-        <h1 className="font-UnifrakturCook font-bold text-[28px] md:text-[36px] lg:text-[48px] leading-tight lg:leading-[60px] text-[#553B7A] text-center">
+      <div className="w-full lg:w-[480px] h-[40px]">
+        <h1 className="font-UnifrakturCook font-bold text-[20px] md:text-[24px] lg:text-[26px] leading-tight lg:leading-[35px] text-[#553B7A] text-center">
           कार्य योजनायें
         </h1>
       </div>
 
       {/* Content Divs */}
-      <div className="space-y-4 mt-6 w-full px-4">
+      <div className="flex-grow space-y-1.5 overflow-y-auto">
         {yojnaTexts.map((text, index) => (
           <div
             key={index}
-            className="relative flex items-center h-[150px] max-w-full lg:w-[900px] rounded-[10px] bg-black bg-opacity-30 mx-auto"
+            className="relative flex items-center h-[80px] max-w-full lg:w-[550px] rounded-[10px] bg-black bg-opacity-30 mx-auto"
           >
             <img
               src={yojnaImg}
@@ -34,7 +34,7 @@ const Yojnaye = () => {
               className="w-full h-full object-cover opacity-75 rounded-[10px]"
               style={{ filter: 'brightness(0.4)' }}
             />
-            <p className="absolute inset-0 flex items-center justify-center text-white text-lg md:text-xl lg:text-2xl font-bold px-4 text-center">
+            <p className="absolute inset-0 flex items-center justify-center text-white text-xs md:text-sm font-bold px-1 text-center">
               {text}
             </p>
           </div>
