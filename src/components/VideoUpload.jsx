@@ -1,6 +1,59 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { Upload } from 'lucide-react';
 
 const VideoUpload = () => {
+  const [showUploader, setShowUploader] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const inputRef = useRef(null);
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('video/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please upload a video file');
+    }
+  };
+
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('video/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please upload a video file');
+    }
+  };
+
+  const handleShowUploader = (e) => {
+    e.preventDefault();
+    setShowUploader(true);
+  };
+
+  const handleFinalSubmit = (e) => {
+    e.preventDefault();
+    // Handle the final form submission with all data including the video
+    console.log('Form submitted with video:', selectedFile);
+  };
+
+  const onButtonClick = () => {
+    inputRef.current.click();
+  };
+
   return (
     <div id="video-upload" className="min-h-screen bg-black p-8 flex items-center">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -48,9 +101,9 @@ const VideoUpload = () => {
         </div>
 
         {/* Right Section - Form */}
-        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold mb-6">विडियो अपलोड करें</h2>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleFinalSubmit}>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1">First Name</label>
@@ -99,14 +152,68 @@ const VideoUpload = () => {
               ></textarea>
             </div>
 
-            <div className="flex justify-start">
-              <button 
-                type="submit" 
-                className="bg-[#70C174] text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors w-[160px]"
-              >
-                Upload Video
-              </button>
-            </div>
+            {showUploader ? (
+              <>
+                <div 
+                  className={`border-2 border-dashed rounded-lg p-4 text-center h-32 flex flex-col items-center justify-center ${
+                    dragActive ? 'border-green-500 bg-green-50' : 'border-gray-300'
+                  } ${selectedFile ? 'bg-green-50' : ''}`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="video/*"
+                    onChange={handleChange}
+                    className="hidden"
+                  />
+                  
+                  {selectedFile ? (
+                    <div className="space-y-1">
+                      <Upload className="mx-auto h-8 w-8 text-green-500" />
+                      <p className="text-sm text-gray-600">Selected: {selectedFile.name}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                      <p className="text-sm text-gray-600">
+                        Drag and drop your video here or{" "}
+                        <button
+                          type="button"
+                          onClick={onButtonClick}
+                          className="text-green-500 hover:text-green-600"
+                        >
+                          browse files
+                        </button>
+                      </p>
+                      <p className="text-xs text-gray-500">Supported formats: MP4, AVI, MOV</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-center pt-2">
+                  <button 
+                    type="submit" 
+                    className="bg-[#70C174] text-white py-2 px-8 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    Submit Form
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-start">
+                <button 
+                  type="button"
+                  onClick={handleShowUploader}
+                  className="bg-[#70C174] text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors w-[160px]"
+                >
+                  Upload Video
+                </button>
+              </div>
+            )}
           </form>
         </div>
       </div>
