@@ -1,10 +1,20 @@
 import React, { useState, useRef } from 'react';
+import { db, storage } from "../firebase.js";  // Import Firebase configuration
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";  // Import Firestore methods
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";  // Import Storage methods
 import { Upload } from 'lucide-react';
 
 const VideoUpload = () => {
   const [showUploader, setShowUploader] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: '',
+  });
+  const [isUploading, setIsUploading] = useState(false); // New state for loading
   const inputRef = useRef(null);
 
   const handleDrag = (e) => {
@@ -44,10 +54,38 @@ const VideoUpload = () => {
     setShowUploader(true);
   };
 
-  const handleFinalSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFinalSubmit = async (e) => {
     e.preventDefault();
-    // Handle the final form submission with all data including the video
-    console.log('Form submitted with video:', selectedFile);
+    setIsUploading(true); // Set uploading state to true
+    try {
+      let videoURL = '';
+      if (selectedFile) {
+        const videoRef = ref(storage, `videos/${selectedFile.name}`);
+        await uploadBytes(videoRef, selectedFile);
+        videoURL = await getDownloadURL(videoRef);
+      }
+
+      await addDoc(collection(db, 'submissions'), {
+        ...formData,
+        videoURL,
+        timestamp: serverTimestamp(),
+      });
+
+      alert('Video uploaded successfully!'); // Alert after successful upload
+      setFormData({ firstName: '', lastName: '', email: '', message: '' });
+      setSelectedFile(null);
+      setShowUploader(false);
+    } catch (error) {
+      console.error("Error submitting form: ", error.message);
+      alert(`Error submitting the form: ${error.message}`);
+    } finally {
+      setIsUploading(false); // Reset uploading state
+    }
   };
 
   const onButtonClick = () => {
@@ -57,50 +95,19 @@ const VideoUpload = () => {
   return (
     <div id="video-upload" className="min-h-screen bg-black p-8 flex items-center">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Section */}
         <div className="text-white space-y-6 flex flex-col justify-center">
           <h1 className="text-4xl font-extrabold mb-2">
             आपका योगदान<br />
             आपके आसपास हो रहे इस प्रकार<br />
             आज ही अपलोड करें
           </h1>
-          
           <p className="text-gray-300 text-base leading-relaxed">
             ऑडियो, विडियो, लेख एवं अन्य सदस्य साहक सहयोग को आमंत्रित करना, सोसल 
             मीडिया में उपलब्ध कराना, प्रतियोगिता आयोजन करना, सेमिनार और गोष्ठी का आयोजन 
             करवाना
           </p>
-
-          {/* Statistics */}
-          <div className="space-y-3 mt-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-400 rounded-sm"></div>
-                <span>40% planting trees</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-400 rounded-sm"></div>
-                <span>35% cleanliness program</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-white rounded-sm"></div>
-                <span>10% helping people</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-400 rounded-sm"></div>
-                <span>10% animal safety</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-pink-400 rounded-sm"></div>
-              <span>5% feeding the poor</span>
-            </div>
-          </div>
         </div>
-
-        {/* Right Section - Form */}
+        
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold mb-6">विडियो अपलोड करें</h2>
           <form className="space-y-4" onSubmit={handleFinalSubmit}>
@@ -109,15 +116,21 @@ const VideoUpload = () => {
                 <label className="block text-sm mb-1">First Name</label>
                 <input 
                   required
+                  name="firstName"
                   type="text" 
+                  value={formData.firstName}
+                  onChange={handleInputChange}
                   className="w-full p-2 border rounded-md"
                 />
               </div>
               <div>
                 <label className="block text-sm mb-1">Last Name</label>
                 <input 
-                  type="text" 
                   required
+                  name="lastName"
+                  type="text" 
+                  value={formData.lastName}
+                  onChange={handleInputChange}
                   className="w-full p-2 border rounded-md"
                 />
               </div>
@@ -127,16 +140,20 @@ const VideoUpload = () => {
               <div>
                 <label className="block text-sm mb-1">E-Mail ID</label>
                 <input 
-                  type="email"
-                  required 
+                  required
+                  name="email"
+                  type="email" 
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="w-full p-2 border rounded-md"
                 />
               </div>
               <div>
                 <label className="block text-sm mb-1">Mobile No.</label>
                 <input 
-                  type="tel" 
                   required
+                  name="mobile"
+                  type="tel" 
                   className="w-full p-2 border rounded-md"
                 />
               </div>
@@ -145,9 +162,11 @@ const VideoUpload = () => {
             <div>
               <label className="block text-sm mb-1">Message</label>
               <textarea 
-                className="w-full p-2 border rounded-md h-32"
                 required
-                maxLength={500}
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-md h-32"
                 placeholder="Type your Message"
               ></textarea>
             </div>
@@ -198,8 +217,9 @@ const VideoUpload = () => {
                   <button 
                     type="submit" 
                     className="bg-[#70C174] text-white py-2 px-8 rounded-md hover:bg-green-600 transition-colors"
+                    disabled={isUploading} // Disable button while uploading
                   >
-                    Submit Form
+                    {isUploading ? 'Uploading...' : 'Submit Form'} {/* Show uploading message */}
                   </button>
                 </div>
               </>
@@ -220,5 +240,6 @@ const VideoUpload = () => {
     </div>
   );
 };
+
 
 export default VideoUpload;

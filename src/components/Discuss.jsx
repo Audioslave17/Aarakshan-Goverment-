@@ -1,39 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebase.js'; // Import your firebase configuration
+import { collection, addDoc, onSnapshot } from 'firebase/firestore';
 
 const Discuss = () => {
   const [email, setEmail] = useState('');
   const [comment, setComment] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [commentsList, setCommentsList] = useState([]);
 
-  // Predefined comments
-  const initialComments = [
-    { email: "rajput123@example.com", comment: "Aarakshan is a necessary step towards equality in our society." },
-    { email: "student45@example.com", comment: "Reservation should focus on economically weaker sections." },
-    { email: "socialjustice2023@example.com", comment: "It's essential to ensure that the benefits of Aarakshan reach the right people." },
-    { email: "advocate234@example.com", comment: "I believe Aarakshan helps to uplift marginalized communities." },
-    { email: "researcher98@example.com", comment: "There should be a thorough evaluation of the reservation policies." },
-    { email: "activist555@example.com", comment: "Aarakshan should not be seen as a divide but a bridge to opportunity." },
-    { email: "concernedcitizen@example.com", comment: "I'm concerned about the misuse of reservation benefits." },
-    { email: "youthvoice@example.com", comment: "Education should be the primary focus of Aarakshan." },
-    { email: "meritfirst@example.com", comment: "Aarakshan is important, but it should not compromise merit." },
-    { email: "debateforum@example.com", comment: "The debate around Aarakshan is vital for our democracy." }
-  ];
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'comments'), (snapshot) => {
+      const commentsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setCommentsList(commentsData);
+    });
 
-  const [commentsList, setCommentsList] = useState(initialComments);
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (email && comment) {
-      setCommentsList([
-        { 
-          email, 
-          comment
-        }, 
-        ...commentsList
-      ]);
-      setEmail('');
-      setComment('');
-      setShowForm(false);
+      try {
+        await addDoc(collection(db, 'comments'), {
+          email,
+          comment,
+          timestamp: new Date(),
+        });
+        setEmail('');
+        setComment('');
+        setShowForm(false);
+      } catch (error) {
+        console.error("Error adding comment: ", error);
+      }
     }
   };
 
@@ -68,7 +66,7 @@ const Discuss = () => {
                   required
                 />
                 <textarea
-                  placeholder="Enter your comment (max 500 words)"
+                  placeholder="Enter your comment (max 2000 words)"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
@@ -93,9 +91,9 @@ const Discuss = () => {
 
           {/* Comments List */}
           <div className="flex-1 overflow-y-auto space-y-4">
-            {commentsList.map((item, index) => (
+            {commentsList.map((item) => (
               <div 
-                key={index} 
+                key={item.id} 
                 className="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
               >
                 <div className="flex flex-col">
