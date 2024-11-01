@@ -29,7 +29,7 @@ const WhatWeDo = () => {
   ];
 
   return (
-    <div id="what-we-do" className="w-full min-h-screen bg-[#EFF7F2] relative px-4 md:px-8 py-4 overflow-hidden">
+    <div id="what-we-do" className="w-full min-h-screen bg-[#faf1f1] relative px-4 md:px-8 py-4 overflow-hidden">
       <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row justify-between items-start">
         
         {/* Left Section */}

@@ -3,13 +3,14 @@ import home from '../assets/home.png';
 import navimg from '../assets/navimg.png';
 import { FaInstagram, FaTwitter, FaFacebookF } from 'react-icons/fa';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { Link as RouterLink } from 'react-router-dom'; // Import RouterLink from react-router-dom
 import { Link } from 'react-scroll';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div id="home" className="relative h-screen w-full overflow-hidden">
       {/* Background Image */}
       <div 
         className="absolute inset-0" 
@@ -44,7 +45,7 @@ const Home = () => {
         <div className={`md:flex md:items-center ${isOpen ? 'block' : 'hidden'} absolute md:relative top-[67px] md:top-auto left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none z-10`}>
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 py-4 md:py-0 px-4 md:px-0">
             <Link to="home" smooth={true} duration={700} className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">Home</Link>
-            <Link to="mission" smooth={true} duration={700} className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">अभियान के बारे में</Link>
+            <RouterLink to="/whatWeDo" className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">अभियान के बारे में</RouterLink>
             <Link to="projects-done" smooth={true} duration={700} className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">अभियान के सूत्रधार</Link>
             <Link to="questions" smooth={true} duration={700} className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">सामान्यतः पूछे जाने वाले प्रश्न</Link>
             <Link to="contact" smooth={true} duration={700} className="text-[#EA772A] cursor-pointer hover:scale-105 duration-200 hover:text-orange-700 text-sm md:text-base">हमसें संपर्क करें</Link>

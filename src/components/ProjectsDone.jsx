@@ -1,9 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import missionImage1 from '../assets/missionImage1.png';
 import missionImage2 from '../assets/missionImage2.png';
 import missionImage3 from '../assets/missionImage3.png';
 
-const MissionCard = ({ image, title, description }) => (
+const MissionCard = ({ image, title, description }) => {
+  const navigate = useNavigate();
+
+  const handleSeeMore = () => {
+    navigate('/'); // Navigate to the home page
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  };
+
+  return (
     <div className="w-full md:w-[411px] rounded-lg overflow-hidden shadow-lg relative group">
       <div 
         className="absolute inset-0 bg-cover bg-center"
@@ -14,7 +23,6 @@ const MissionCard = ({ image, title, description }) => (
         <div className="absolute inset-0 bg-black opacity-60 transition-opacity group-hover:opacity-70" />
       </div>
       
-      {/* Adjusted padding and added min-height with less height */}
       <div className="relative p-6 flex flex-col justify-between min-h-[380px]">
         <div className="flex-grow">
           <h3 className="font-roboto text-2xl md:text-[28px] font-bold leading-tight text-white mb-2">
@@ -26,13 +34,17 @@ const MissionCard = ({ image, title, description }) => (
         </div>
         
         <div className="mt-4">
-          <button className="w-[132px] h-[51px] bg-white text-black rounded-lg hover:bg-opacity-90 transition-all duration-300 font-roboto font-medium">
+          <button 
+            onClick={handleSeeMore} // Button click to see more
+            className="w-[132px] h-[51px] bg-white text-black rounded-lg hover:bg-opacity-90 transition-all duration-300 font-roboto font-medium flex items-center justify-center"
+          >
             See More
           </button>
         </div>
       </div>
     </div>
-); 
+  );
+}; 
 
 const ProjectsDone = () => {
   const cardData = [

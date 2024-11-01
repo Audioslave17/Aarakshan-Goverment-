@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { db, storage } from "../firebase.js";  // Import Firebase configuration
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";  // Import Firestore methods
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";  // Import Storage methods
+import { db, storage } from "../firebase.js";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Upload } from 'lucide-react';
 
 const VideoUpload = () => {
@@ -14,7 +14,7 @@ const VideoUpload = () => {
     email: '',
     message: '',
   });
-  const [isUploading, setIsUploading] = useState(false); // New state for loading
+  const [isUploading, setIsUploading] = useState(false);
   const inputRef = useRef(null);
 
   const handleDrag = (e) => {
@@ -61,7 +61,7 @@ const VideoUpload = () => {
 
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
-    setIsUploading(true); // Set uploading state to true
+    setIsUploading(true);
     try {
       let videoURL = '';
       if (selectedFile) {
@@ -76,7 +76,7 @@ const VideoUpload = () => {
         timestamp: serverTimestamp(),
       });
 
-      alert('Video uploaded successfully!'); // Alert after successful upload
+      alert('Video uploaded successfully!');
       setFormData({ firstName: '', lastName: '', email: '', message: '' });
       setSelectedFile(null);
       setShowUploader(false);
@@ -84,7 +84,7 @@ const VideoUpload = () => {
       console.error("Error submitting form: ", error.message);
       alert(`Error submitting the form: ${error.message}`);
     } finally {
-      setIsUploading(false); // Reset uploading state
+      setIsUploading(false);
     }
   };
 
@@ -93,22 +93,31 @@ const VideoUpload = () => {
   };
 
   return (
-    <div id="video-upload" className="min-h-screen bg-black p-8 flex items-center">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div id="video-upload" className="min-h-screen bg-[#B50301] p-8 flex items-center">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="text-white space-y-6 flex flex-col justify-center">
-          <h1 className="text-4xl font-extrabold mb-2">
-            आपका योगदान<br />
-            आपके आसपास हो रहे इस प्रकार<br />
-            आज ही अपलोड करें
+          <h1 className='text-7xl font-extrabold'>आपका योगदान</h1>
+          <h1 className="text-5xl font-semibold mb-2">
+            आपके पास उपलब्ध<br />
+            परिवार वाद के अनुभवों को<br />
+            विडियो के माध्यम से साझा कर
           </h1>
-          <p className="text-gray-300 text-base leading-relaxed">
-            ऑडियो, विडियो, लेख एवं अन्य सदस्य साहक सहयोग को आमंत्रित करना, सोसल 
-            मीडिया में उपलब्ध कराना, प्रतियोगिता आयोजन करना, सेमिनार और गोष्ठी का आयोजन 
-            करवाना
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xl">उदाहरण हेतु, इस लिंक के विडियो को देखें</p>
+            <a href="https://www.youtube.com/watch?v=YYZCpJmHAqI" target="_blank" rel="noopener noreferrer" className="relative inline-block">
+              <img 
+                src={`https://img.youtube.com/vi/YYZCpJmHAqI/default.jpg`}
+                alt="Video thumbnail"
+                className="rounded-lg shadow-lg w-32"
+              />
+              <span className="absolute inset-0 flex items-center justify-center text-white bg-black bg-opacity-50 rounded-lg">
+                Click Here
+              </span>
+            </a>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold mb-6">विडियो अपलोड करें</h2>
           <form className="space-y-4" onSubmit={handleFinalSubmit}>
             <div className="grid grid-cols-2 gap-4">
@@ -216,10 +225,10 @@ const VideoUpload = () => {
                 <div className="flex justify-center pt-2">
                   <button 
                     type="submit" 
-                    className="bg-[#70C174] text-white py-2 px-8 rounded-md hover:bg-green-600 transition-colors"
-                    disabled={isUploading} // Disable button while uploading
+                    className="bg-[#B50301] text-white py-2 px-8 rounded-md hover:bg-[#70C174] transition-colors"
+                    disabled={isUploading}
                   >
-                    {isUploading ? 'Uploading...' : 'Submit Form'} {/* Show uploading message */}
+                    {isUploading ? 'Uploading...' : 'Submit Form'}
                   </button>
                 </div>
               </>
@@ -228,7 +237,7 @@ const VideoUpload = () => {
                 <button 
                   type="button"
                   onClick={handleShowUploader}
-                  className="bg-[#70C174] text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors w-[160px]"
+                  className="bg-[#fa3c38] text-white py-2 px-4 rounded-md hover:bg-[#70C174] transition-colors w-[160px]"
                 >
                   Upload Video
                 </button>
@@ -240,6 +249,5 @@ const VideoUpload = () => {
     </div>
   );
 };
-
 
 export default VideoUpload;
